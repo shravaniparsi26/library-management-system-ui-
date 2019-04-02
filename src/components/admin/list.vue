@@ -6,17 +6,17 @@
     <template>
   <v-data-table
     :headers="headers"
-    :items="this.$store.state.book"
+    :items="books"
     class="elevation-1"
   >
     <template v-slot:items="props">
      <td>{{ props.item.title }}</td>
        
         <td class="text-xs-right">{{ props.item.author }}</td>
-        <td class="text-xs-right">{{ props.item.cat }}</td>
-        <td class="text-xs-right">{{ props.item.des}}</td>
-        <td class="text-xs-right">{{ props.item.copies}}</td>
-        <td class="text-xs-right"><v-btn small color="red lighten-2">delete</v-btn></td>
+        <td class="text-xs-right">{{ props.item.category }}</td>
+        <td class="text-xs-right">{{ props.item.description}}</td>
+        <td class="text-xs-right">{{ props.item.total_Number_Copies}}</td>
+        <td class="text-xs-right">{{ props.item.copies_Issued}}</td>
     </template>
   </v-data-table>
 </template>
@@ -33,28 +33,31 @@ export default {
   components: {
     h
   },
-  /* mounted() {
-            this.$http.get("").then(result => {
-                this.book = result.body;
+   mounted() {
+             let headers=new Headers( { "content-type": "application/json" });
+      headers['Authorization']=this.$store.state.accessToken;
+            this.$http.get("http://localhost:3000/api/books",{headers:headers}).then(result => {
+                this.books = result.body;
             }, error => {
                 console.error(error);
             });
-        },*/
+        },
   data () {
       return {
         search: '',
-        book:[],
+        books:[],
         headers: [
           {
             text: 'BOOK TITLE',
             align: 'left',
-            value: 'title'
+            value: 'title',
+            align:'left'
           },
-          { text: 'AUTHOR', value: 'author', align: 'right', },
-          { text: 'CATEGORY', value: 'cat',align: 'right' },
-          { text: 'DESCRIPTION', value: 'des',align: 'right' },
-           { text: 'NO. OF COPIES', value: 'copies',align: 'right' },
-          { text: 'ACTION',align: 'right' },
+          { text: 'AUTHOR', value: 'author', align: 'left', },
+          { text: 'CATEGORY', value: 'category',align: 'left' },
+          { text: 'DESCRIPTION', value: 'description',align: 'left' },
+           { text: 'NO. OF COPIES', value: 'total_Number_Copies',align: 'left' },
+          { text: 'COPIES ISSUED',value:'copies_Issued',align: 'left' },
           
         ],
        

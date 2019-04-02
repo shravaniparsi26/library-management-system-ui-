@@ -13,51 +13,26 @@
 <v-card>
  <v-container fluid grid-list-xl >
             <v-layout column wrap>
-              <v-flex
-                v-for="(value,key) in reports"
-                :key="value"
-              >
+              <v-flex>
 
         <v-card  color="blue lighten-4">
-          <v-card-text class="px-1"><b>{{key}}:{{value}}</b></v-card-text>
+          <v-card-text class="px-1"><b>TOTAL BOOKS:{{value1}}</b></v-card-text>
           
         </v-card>
+      </v-flex>
+      <v-flex>
+
+        <v-card  color="blue lighten-4">
+          <v-card-text class="px-1"><b>TOTAL FINE:{{value2}}</b></v-card-text>
+          
+        </v-card>
+      </v-flex>
      
-      
-    
-
-
-              </v-flex></v-layout></v-container>
+      </v-layout>
+      </v-container>
+</v-card>
               
-              <v-card
-    class="mx-auto text-xs-center"
-    color="blue"
-    dark
-    max-width="600"
-  >
-    <v-card-text>
-      <v-sheet color="rgba(0, 0, 0, .12)">
-        <v-sparkline
-          :value="value"
-          color="rgba(255, 255, 255, .7)"
-          height="100"
-          padding="24"
-          stroke-linecap="round"
-          smooth
-        >
-          <template v-slot:label="item">
-            {{ item.value }}
-          </template>
-        </v-sparkline>
-      </v-sheet>
-    </v-card-text>
-
-    <v-card-text>
-      <div class="display-1 font-weight-thin">WEEKLY BOOK ISSUES STATISTICS</div>
-    </v-card-text>
-
-  </v-card>
-  </v-card>
+              
       </v-container>
      
    </v-content>
@@ -72,25 +47,31 @@ export default {
   components: {
     h
   },
-   /* mounted() {
-            this.$http.get("").then(result => {
-                this.reports = result.body;
+    mounted() {
+           let amount=0;
+         let headers=new Headers( { "content-type": "application/json" });
+      headers['Authorization']=this.$store.state.accessToken;
+            this.$http.get("http://localhost:3000/api/transactions?filter[where][isReturned]=false",{headers:headers})
+            .then(result => {
+                this.books=result.body;
+                 this.books.forEach((item) => {
+                   console.log(item);
+                amount+=item.fine;
+                  
+                });
+                console.log(amount);
+                console.log(this.books.length);
+                this.value2=amount;
+                this.value1=this.books.length;
             }, error => {
                 console.error(error);
-            });
-        },*/
+            });  
+        },
   data () {
     return {
-      reports:this.$store.state.reports,
-       value: [
-        423,
-        446,
-        675,
-        510,
-        590,
-        610,
-        760
-      ]
+    value1:0,
+    value2:0,
+    books:[]
     }
   }
 }

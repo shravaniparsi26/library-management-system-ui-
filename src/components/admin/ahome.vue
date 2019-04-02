@@ -14,17 +14,29 @@
 <template>
   <v-timeline>
     <v-timeline-item
-      v-for="item in items"
-                :key="item.title"
       color="blue lighten-2"
       large
     >
       <v-card class="elevation-2">
-        <v-card-title class="headline">{{item.title}}</v-card-title>
+        <v-card-title class="headline">{{this.title1}}</v-card-title>
         <v-divider></v-divider>
         <v-card-text>
-          <v-progress-circular :value="item.value/100"></v-progress-circular>
-         {{item.value}}
+          <v-progress-circular :value="this.value1"></v-progress-circular>
+         {{this.value1}}
+        </v-card-text>
+      </v-card>
+    </v-timeline-item>
+    <v-timeline-item
+     color="blue lighten-2"
+      large
+      right=true
+    >
+       <v-card class="elevation-2">
+        <v-card-title class="headline">{{this.title2}}</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-progress-circular :value="this.value2"></v-progress-circular>
+         {{this.value2}}
         </v-card-text>
       </v-card>
     </v-timeline-item>
@@ -48,19 +60,36 @@ export default {
  
     data() {
       return{
-     items:[
-       {title:'Total issued books',value:'670'},
-        {title:'updated fine amount',value:'3000'}
-     ]
+       title1:'Total issued Copies',
+       value1:0,
+        title2:'updated fine amount',
+        value2:0,
+        books:[]
+     
       }
     },
-     /* mounted() {
-            this.$http.get("").then(result => {
-                this.items = result.body;
+      mounted() {
+        let amount=0;
+         let headers=new Headers( { "content-type": "application/json" });
+      headers['Authorization']=this.$store.state.accessToken;
+            this.$http.get("http://localhost:3000/api/transactions?filter[where][isReturned]=false",{headers:headers})
+            .then(result => {
+                this.books=result.body;
+                 this.books.forEach((item) => {
+                   console.log(item);
+                amount+=item.fine;
+                  
+                });
+                console.log(amount);
+                console.log(this.books.length);
+                this.value2=amount;
+                this.value1=this.books.length;
+                this.$store.state.TOTAL_FINE=amount;
+                this.$store.state.TOTAL_BOOKS=this.books.length;
             }, error => {
                 console.error(error);
             });
-        },*/
+        },
 
  
 }

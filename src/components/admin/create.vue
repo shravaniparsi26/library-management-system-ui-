@@ -14,33 +14,34 @@
     lazy-validation
   >
     <v-text-field
-      v-model="b.bookname"
-      :rules="nameRules"
+      v-model="b.title"
+      :rules="titleRules"
       label="BookName"
       required
     ></v-text-field>
 
     <v-text-field
-      v-model="b.copies"
-      :rules="nameRules"
+      v-model="b.total_Number_Copies"
+      :rules="copyRules"
       label="copies"
+      type="number"
       required
     ></v-text-field>
     <v-text-field
       v-model="b.author"
-      :rules="nameRules"
+      :rules="authorRules"
       label="author"
       required
     ></v-text-field>
     <v-text-field
-      v-model="b.catagory"
-      :rules="nameRules"
+      v-model="b.category"
+      :rules="categoryRules"
       label="catagory"
       required
     ></v-text-field>
     <v-textarea
         v-model="b.description"
-        :rules="nameRules"
+        :rules="descriptionRules"
         
         label="Description"
         rows="5"
@@ -102,11 +103,20 @@ export default {
       validate(){
          if (this.$refs.form.validate()) {
              this.dialog=true;
-              /* this.$http.post(" ", this.b, { headers: { "content-type": "application/json" } }).then(result => {
-                    if(this.response===){this.dialog=true;}
+             this.b.title=this.b.title.trim();
+             this.b.author=this.b.author.trim();
+             this.b.description=this.b.description.trim();
+             this.b.category=this.b.category.trim();
+              let headers=new Headers( { "content-type": "application/json" });
+      headers['Authorization']=this.$store.state.accessToken;
+               this.$http.post("http://localhost:3000/api/books", this.b, { headers:headers }).then(result => {
+                    {
+                      this.dialog=true;
+                      this.$refs.form.reset();
+                    }
                 }, error => {
                     console.error(error);
-                });*/
+                });
 
          } 
       }
@@ -114,16 +124,35 @@ export default {
   data () {
     return {
       b:{
-        bookname:"",
-        copies:"",
+        title:"",
+        total_Number_Copies:"",
         author:"",
-        catagory:"",
+        category:"",
         description:"",
-        dialog:false,},
-       nameRules: [
+       
+        },
+         dialog:false,
+       titleRules: [
         v => !!v || "field is required",
-        
-      ],
+        v => v.trim().length!= 0||"title name must be valid",
+        ],
+         copyRules: [
+        v => !!v || "field is required",
+        v => v.length!=0||"must be number,not empty",
+        ],
+         authorRules: [
+        v => !!v || "field is required",
+        v => v.trim().length!= 0||"author name must be valid",
+        ],
+         categoryRules: [
+        v => !!v || "field is required",
+        v => v.trim().length!= 0||"category name must be valid",
+        ],
+         descriptionRules: [
+        v => !!v || "field is required",
+        v => v.trim().length!= 0||"description name must be valid",
+        ],
+
     }
   }
 }

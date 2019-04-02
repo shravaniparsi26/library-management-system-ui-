@@ -1,11 +1,12 @@
 <template>
   <div class="main">
   <v-navigation-drawer :clipped="clipped" v-model="drawer" app  dark class="blue">
-    <v-img :aspect-ratio="16/9" src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
+    <v-img :aspect-ratio="16/9" src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg">
+    
         <v-layout pa-2 column fill-height class="lightbox white--text">
           <v-spacer></v-spacer>
           <v-flex shrink>
-            <div class="subheading">USER</div>
+            <div class="subheading">{{this.$store.state.userName}}</div>
             <div class="body-1">welcome to online library</div>
           </v-flex>
         </v-layout>
@@ -76,7 +77,7 @@ export default {
   methods:{
              logout(){
                this.dialog=false;
-        sessionStorage.clear();
+        localStorage.clear();
         this.$router.push("/");
         
   },

@@ -34,9 +34,9 @@
         <td>{{ props.item.title }}</td>
        
         <td class="text-xs-right">{{ props.item.author }}</td>
-        <td class="text-xs-right">{{ props.item.cat }}</td>
-        <td class="text-xs-right">{{ props.item.des}}</td>
-         <td class="text-xs-right"><v-btn small color="green"  @click="dialog=true">request</v-btn></td>
+        <td class="text-xs-right">{{ props.item.category }}</td>
+        <td class="text-xs-right">{{ props.item.description}}</td>
+        <td class="text-xs-right"><v-btn small color="green"  @click="id=props.item.id,dialog=true">request</v-btn></td>
 
       </template>
       <v-alert v-slot:no-results :value="true" color="error" icon="warning">
@@ -70,6 +70,18 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="fail" width="500" lazy>
+      <v-card>
+     <v-card-text>
+        {{message}}
+    </v-card-text>
+     <v-divider></v-divider>
+     <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" flat @click="fail=false">OK</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
       </v-container>
     </v-content>
   </v-app>
@@ -83,42 +95,61 @@ export default {
   components: {
     h
   },
-  mounted(){
-   console.log('wiu');
-    },
  data () {
       return {
       
         search: '',
+        id:'',
         dialog:false,
         suc:false,
-        books:this.$store.state.book,
+        books:this.$store.state.books,
+        fail:false,
+        message:'',
         headers: [
           {
             text: 'BOOK TITLE',
             align: 'left',
-            value: 'title'
+            value: 'title',
+            align:'left'
           },
-          { text: 'AUTHOR', value: 'author' },
-          { text: 'CATEGORY', value: 'cat' },
-          { text: 'DESCRIPTION', value: 'des' },
-          { text: 'ACTION',value:'' },
+          { text: 'AUTHOR', value: 'author',align:'left' },
+          { text: 'CATEGORY', value: 'category',align:'left' },
+          { text: 'DESCRIPTION', value: 'description',align:'left' },
+          { text: 'ACTION',value:'',align:'left', sortable: false },
           ],
        
       }
  },
  methods:{
    request(){
-     this.dialog=false,
-     this.suc=true
+     this.dialog=false;
+     let d=new Date();
+     let t={user_Id:this.$store.state.userId,
+            book_Id:this.id,
+            issued_Date:Date.now(),
+            return_By_This_Date:d.setDate(d.getDate() + 7)
+     };
+      let headers=new Headers( { "content-type": "application/json" });
+      headers['Authorization']=this.$store.state.accessToken;
+    
+      this.$http.post("http://localhost:3000/api/transactions",t,{headers:headers}).then(result => {
+                this.suc=true;
+                this.$store.commit('fetchData');
+
+            }, error => {
+              this.message=error.body.error.message;
+              this.fail=true;
+                console.error(error);
+            });
+    
    }
  },
- /* mounted() {
-            this.$http.get("").then(result => {
+ /*mounted() {
+            this.$http.get("http://localhost:3000/api/books").then(result => {
                 this.books = result.body;
             }, error => {
                 console.error(error);
             });
-        },*/
+ },*/
 }
 </script>

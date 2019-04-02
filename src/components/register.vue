@@ -15,7 +15,7 @@
                 <v-card-text>
                   <v-form ref="form" lazy-validation >
                       <v-text-field
-                      v-model="r.name"
+                      v-model="r.userName"
                       label="name"
                       required
                        hint="enter username"
@@ -24,7 +24,7 @@
                     :validate-on-blur="true"
                       ></v-text-field>
                     <v-text-field
-                      v-model="r.user"
+                      v-model="r.email"
                       :rules="nameRules"
                       label="mail"
                       required
@@ -33,7 +33,15 @@
                       :validate-on-blur="true"
                       
                     ></v-text-field>
-
+                    <v-text-field
+                      v-model="r.rollnumber"
+                      label="rollnumber"
+                      required
+                    :rules="rollRules"
+                    :validate-on-blur="true"
+                     hint="enter rollnumber"
+                      persistent-hint
+                      ></v-text-field>
                     <v-text-field
                       type="password"
                       v-model="r.password"
@@ -54,15 +62,7 @@
                       persistent-hint
                       :validate-on-blur="true"
                     ></v-text-field>
-                    <v-text-field
-                      v-model="r.rollno"
-                      label="rollno"
-                      required
-                    :rules="rollRules"
-                    :validate-on-blur="true"
-                     hint="enter rollno"
-                      persistent-hint
-                      ></v-text-field>
+                    
                        <v-flex xs12 class="text-xs-right">
     <v-btn
       color="primary"
@@ -97,6 +97,30 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+                    v-model="fail"
+                    width="500"
+                    lazy
+    >
+      <v-card>
+     <v-card-text>
+         FAILED TO REGISTER!
+    </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            flat
+            @click="fail=false"
+          >
+            OK
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
                   </v-form>
                 </v-card-text>
                 
@@ -112,15 +136,17 @@
 </template>
 <script>
 export default {
-  name: "App",
+ 
   data() {
     return {
       r:{
-      user: "",
+      email: "",
       password: "",
-      name:"",
+      userName:"",
       cpassword:"",
-      rollno:"",},
+      rollnumber:"",
+      },
+      fail:false,
 
       nameRules: [
         v => !!v || "field is required",
@@ -128,7 +154,8 @@ export default {
       ],
       userRules: [
         v => !!v || "field is required",
-       v => v.length >= 5||"must contain atleast 5 letters"
+       v => v.trim().length!= 0||"user name must be valid",
+        
       ],
       passRules: [
         v => !!v || "field is required",
@@ -141,11 +168,13 @@ export default {
       ],
       cpassRules: [
         v => !!v || "field is required",
-       v => v===this.password||"passwords must be same"
+       v => v===this.r.password||"passwords must be same"
       ],
       rollRules: [
         v => !!v || "field is required",
-        v => v.length== 5||"must have 5 digits"
+         v => v.search(' ')==-1||"should not contain spaces",
+        v => v.length==10||"roll number must contain 10 character",
+        
       ],
      dialog: false
       
@@ -155,12 +184,14 @@ export default {
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        this.dialog=true;
-       /* this.$http.post(" ", this.r, { headers: { "content-type": "application/json" } }).then(result => {
-                    if(this.response===){this.dialog=true;}
+        this.r.userName=this.r.userName.trim();
+       this.$http.post("http://localhost:3000/api/Students", this.r, { headers: { "content-type": "application/json" } })
+       .then(result => {
+                    {this.dialog=true;}
                 }, error => {
+                  this.fail=true;
                     console.error(error);
-                });*/
+                });
        
       } },
       log() {

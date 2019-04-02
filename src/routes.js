@@ -15,28 +15,30 @@ import student from './components/student/student.vue';
 
 
 export const routes=[
-    {path:'/',component:library },
+    {path:'/',component:library, },
     {path:'/login',component:login, },
-    {path:'/register',component:register, },
-    {path:'/admin',component:admin, beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}},
+    {path:'/register',component:register,},
+    {path:'/admin',component:admin,
+     beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}},
     children: [
         {
           path: 'reports',
           component: reports,
-          beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}
+          beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}},
+          
         },
-    {path:'create',component:create,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}},
-    {path:'list',component:list,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}} },
-    {path:'ahome',component:ahome,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}},
+    {path:'create',component:create,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},
+    {path:'list',component:list,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}} },
+    {path:'ahome',component:ahome,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},
 
     ],
     },
-    {path:'/student',component:student,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}},
+    {path:'/student',component:student,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}},
     children:[
-    {path:'shome',component:shome ,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}},
-    {path:'mybooks',component:mybooks,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}},
-    {path:'fine',component:fine,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}}, 
-    {path:'profile',component:profile,beforeEnter:(to,from,next)=>{if(sessionStorage.auth){next();}else{next('/');}}},]}
+    {path:'shome',component:shome ,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},
+    {path:'mybooks',component:mybooks,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},
+    {path:'fine',component:fine,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}}, 
+    {path:'profile',component:profile,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},]}
     
     
 ];

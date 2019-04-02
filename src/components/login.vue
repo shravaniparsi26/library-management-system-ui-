@@ -15,7 +15,7 @@
                 <v-card-text>
                   <v-form ref="form" lazy-validation >
                     <v-text-field
-                      v-model="u.user"
+                      v-model="u.email"
                       :rules="nameRules"
                       label="mail"
                       required
@@ -49,7 +49,18 @@
           </v-layout>
         </v-container>
       </v-content>
-      
+      <v-dialog v-model="dialog" width="500" lazy>
+      <v-card>
+     <v-card-text>
+         please enter correct login details
+    </v-card-text>
+     <v-divider></v-divider>
+     <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" flat @click="dialog=false">ok</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </div>
   </v-app>
   
@@ -59,8 +70,9 @@ export default {
   name: "App",
   data() {
     return {
+      dialog:false,
       u:{
-      user: "",
+      email: "",
       password: "",
       },
 
@@ -84,20 +96,31 @@ export default {
   methods: {
     validate() {
       if (this.$refs.form.validate()) {
-        sessionStorage.auth = true;
-       // this.$http.post('http://localhost/3000/api/Students/login',this.u).then(response=>{if( ){this.$router.push("/admin/ahome")}else{this.$router.push("/student/shome")}});
-        if(this.u.user==='admin@admin.com'&&this.u.password==='Password123@')
+        localStorage.auth = true;
+        if(this.u.email==='admin@admin.com'&&this.u.password==='Password123@')
         {this.$router.push("/admin/ahome");}
         else{
-        this.$router.push("/student/shome");
-              /* this.$http.post("https://httpbin.org/post", this.input, { headers: { "content-type": "application/json" } })
+       // this.$router.push("/student/shome");
+              this.$http.post("http://localhost:3000/api/Students/login", this.u, { headers: { "content-type": "application/json" } })
               .then(result => {
-                if(result.===){
-
-                    this.$router.push("/student/shome");
+                this.$store.state.userId=result.body.userId;
+                this.$store.state.accessToken=result.body.id;
+                console.log(this.$store.state.userId);
+                 let headers=new Headers( { "content-type": "application/json" });
+               headers['Authorization']=this.$store.state.accessToken;
+      
+            this.$http.get("http://localhost:3000/api/Students/"+this.$store.state.userId,{headers: headers} ).then(result => {
+                this.$store.state.userName = result.body.userName;
+            }, error => {
+                console.error(error);
+            });
+                 this.$store.commit('fetch');
+                this.$store.commit('fetchData');
+                this.$router.push("/student/shome");
                 }, error => {
-                    console.error(error);
-                });*/
+                  this.dialog=true;
+                });
+               
             }
       } 
       }

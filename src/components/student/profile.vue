@@ -11,16 +11,22 @@
       </v-flex>
       </v-container>
         <v-card>
- <v-container fluid grid-list-xl >
+      <v-container fluid grid-list-xl >
             <v-layout column wrap>
-              <v-flex 
-                v-for="(value, key) in profile"
-                :key="value"
-               
-              >
-<p><b>{{key}}      {{value}}</b></p>
+              <v-flex >
+<pre><b>UserName:   {{this.profile.userName}}</b></pre>
 <v-divider></v-divider>
-      </v-flex></v-layout></v-container></v-card>
+      </v-flex>
+      <v-flex >
+<pre><b>Roll number:   {{this.profile.rollnumber}}</b></pre>
+<v-divider></v-divider>
+      </v-flex>
+      <v-flex >
+<pre><b>Email:   {{this.profile.email}}</b></pre>
+<v-divider></v-divider>
+      </v-flex>
+
+      </v-layout></v-container></v-card>
       </v-container>
     </v-content>
   </v-app>
@@ -37,16 +43,20 @@ export default {
   data () {
     return {
       
-    profile:this.$store.state.profile
+    profile:{}
    
     }
   },
-   /* mounted() {
-            this.$http.get("").then(result => {
-                this.books = result.body;
+    mounted() {
+      
+      let headers=new Headers( { "content-type": "application/json" });
+      headers['Authorization']=this.$store.state.accessToken;
+      
+            this.$http.get("http://localhost:3000/api/Students/"+this.$store.state.userId,{headers: headers} ).then(result => {
+                this.profile = result.body;
             }, error => {
                 console.error(error);
             });
-        },*/
+        },
 }
 </script>
