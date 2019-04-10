@@ -6,7 +6,7 @@
         <v-layout pa-2 column fill-height class="lightbox white--text">
           <v-spacer></v-spacer>
           <v-flex shrink>
-            <div class="subheading">{{this.$store.state.userName}}</div>
+            <div class="subheading">{{uname}}</div>
             <div class="body-1">welcome to online library</div>
           </v-flex>
         </v-layout>
@@ -91,9 +91,19 @@ export default {
           { title: 'Profile', icon: 'question_answer',path:'/student/profile',tool:'my profile' }
         ],
         drawer: false,
-        dialog:false
+        dialog:false,
+        uname:localStorage.getItem('userName'),
         
     }
+  },
+  created(){
+    console.log(this.uname);
+    console.log(this.$store.state.userName);
+
+    this.uname=localStorage.getItem('userName');
+  },
+   mounted(){
+    console.log(this.uname);
   }
 }
 

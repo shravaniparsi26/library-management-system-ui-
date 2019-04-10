@@ -32,10 +32,10 @@
       <template v-slot:items="props">
         <td>{{ props.item.Book.title }}</td>
        
-        <td class="text-xs-right">{{ props.item.Book.author }}</td>
-        <td class="text-xs-right">{{ props.item.issued_Date }}</td>
-        <td class="text-xs-right">{{ props.item.fine}}</td>
-        <td class="text-xs-right">
+        <td class="text-xs-left">{{ props.item.Book.author }}</td>
+        <td class="text-xs-left">{{ props.item.issued_Date }}</td>
+        <td class="text-xs-left">{{ props.item.fine}}</td>
+        <td class="text-xs-left">
           <v-btn small color="green lighten-2" :disabled='props.item.isReturned' @click="dialog=true,id=props.item.book_Id">return<span v-if="props.item.isReturned">ed</span></v-btn>
          
           </td>
@@ -45,7 +45,7 @@
       </v-alert>
       <template v-slot:footer>
       <td :colspan="headers.length">
-        <strong>TOTAL BOOKS BORROWED:{{this.$store.state.total_mybooks}}</strong>
+        <strong>TOTAL BOOKS BORROWED:{{total_books}}</strong>
       </td>
     </template>
     
@@ -126,25 +126,30 @@ export default {
       },
       refresh(){
         this.suc=false; 
-        this.$store.commit('fetchData');
+        this.fetchData();
       },
-      /*fetchData(){
+      fetchData(){
          let headers=new Headers( { "content-type": "application/json" });
-      headers['Authorization']=this.$store.state.accessToken;
-         let url="http://localhost:3000/api/transactions?filter[include]=Book&filter[where][user_Id]="+this.$store.state.userId;
+          headers['Authorization']=localStorage.accessToken;
+         let url="http://localhost:3000/api/transactions?filter[include]=Book&filter[where][user_Id]="+localStorage.userId+"&getfine=true";
           console.log(url);
             this.$http.get(url,{headers:headers}).then(result => {
+             
               this.mybooks = result.body;
-              this.total_books=this.mybooks.length;
+             this.mybooks.forEach((item,index,array)=>{
+                 if(item.isReturned==false){
+                   this.total_books+=1;
+                 }
+               })
             }, error => {
                 console.error(error);
             });
-      }*/
+      }
   },
   data () {
       return {
         search: '',
-        mybooks:this.$store.state.mybooks,
+        mybooks:[],
         dialog:false,
         suc:false,
         fail:false,
@@ -166,8 +171,8 @@ export default {
         
       }
     },
-     /* mounted() {
+      mounted() {
          this.fetchData();
-        },*/
+        },
 }
 </script>

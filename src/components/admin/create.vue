@@ -108,7 +108,8 @@ export default {
              this.b.description=this.b.description.trim();
              this.b.category=this.b.category.trim();
               let headers=new Headers( { "content-type": "application/json" });
-      headers['Authorization']=this.$store.state.accessToken;
+      if(localStorage.accessToken==null||localStorage.accessToken==''){this.$router.push('/');}
+      headers['Authorization']=localStorage.accessToken;
                this.$http.post("http://localhost:3000/api/books", this.b, { headers:headers }).then(result => {
                     {
                       this.dialog=true;

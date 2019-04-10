@@ -47,12 +47,12 @@ export default {
    
     }
   },
-    mounted() {
+   mounted() {
       
       let headers=new Headers( { "content-type": "application/json" });
-      headers['Authorization']=this.$store.state.accessToken;
+      headers['Authorization']=localStorage.accessToken;
       
-            this.$http.get("http://localhost:3000/api/Students/"+this.$store.state.userId,{headers: headers} ).then(result => {
+            this.$http.get("http://localhost:3000/api/Students/"+localStorage.userId,{headers: headers} ).then(result => {
                 this.profile = result.body;
             }, error => {
                 console.error(error);

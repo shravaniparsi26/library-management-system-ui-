@@ -28,7 +28,7 @@
                     <v-text-field
                       type="password"
                       v-model="u.password"
-                      :rules="passRules"
+                      
                       label="password"
                       required
                       hint="must have a capital,numeric and special char"
@@ -80,7 +80,7 @@ export default {
         v => !!v || "field is required",
         v => /.+@.+/.test(v) || "E-mail must be valid"
       ],
-      passRules: [
+     /* passRules: [
         v => !!v || "password is required",
         v => /[A-Z]/.test(v) || " must contain capital,special char and number",
         // v => this.f2 ?/[a-z]/.test(v) || " must contain capital,special char and number":true,
@@ -88,43 +88,95 @@ export default {
         v =>
           /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(v) ||
           " must contain capital,special char and number"
-      ]
+      ]*/
       
     };
   },
 
   methods: {
     validate() {
-      if (this.$refs.form.validate()) {
-        localStorage.auth = true;
-        if(this.u.email==='admin@admin.com'&&this.u.password==='Password123@')
-        {this.$router.push("/admin/ahome");}
-        else{
-       // this.$router.push("/student/shome");
+       if (this.$refs.form.validate()) {
+        
+          
               this.$http.post("http://localhost:3000/api/Students/login", this.u, { headers: { "content-type": "application/json" } })
               .then(result => {
-                this.$store.state.userId=result.body.userId;
-                this.$store.state.accessToken=result.body.id;
-                console.log(this.$store.state.userId);
-                 let headers=new Headers( { "content-type": "application/json" });
-               headers['Authorization']=this.$store.state.accessToken;
-      
-            this.$http.get("http://localhost:3000/api/Students/"+this.$store.state.userId,{headers: headers} ).then(result => {
-                this.$store.state.userName = result.body.userName;
-            }, error => {
-                console.error(error);
-            });
-                 this.$store.commit('fetch');
-                this.$store.commit('fetchData');
-                this.$router.push("/student/shome");
+                console.log(result);
+                    if(result.body.userId=='5caaf22cc82c9706c8d5c8dc'){
+                      localStorage.setItem('auth', true);
+                      localStorage.setItem('accessToken',result.body.id);
+                      console.log("inadmin");
+                      this.$store.state.userId=result.body.userId;
+                      this.$store.state.accessToken=result.body.id;
+                      this.$router.push("/admin/ahome");
+
+                    }
+                    else{
+                      console.log("student");
+                      localStorage.setItem('auth', true);
+                      localStorage.setItem('userId',result.body.userId);
+                      localStorage.setItem('accessToken',result.body.id);
+                      this.$store.state.userId=result.body.userId;
+                      this.$store.state.accessToken=result.body.id;
+                      this.fetch((err, result) => {
+                        if (err) throw err;
+                        this.fetchData((er, status) => {
+                          if (er) throw er;
+                          this.fetchProfileData((errr, statuss) => {
+                            if (errr) throw errr;
+                            this.$router.push("/student/shome");
+                          });
+                        });
+                      });
+                    }
                 }, error => {
                   this.dialog=true;
                 });
                
             }
-      } 
-      }
-    }
-  
+      
+      },
+      fetch(cb) {
+                 this.$http.get("http://localhost:3000/api/books").then(result => {
+                          this.$store.state.books = result.body;
+                          cb(null,'success')
+                      }, error => {
+                        cb(error);
+                         // console.log(error);
+                      });
+              },
+    fetchData(cb){
+                let headers=new Headers( { "content-type": "application/json" });
+             headers['Authorization']=this.$store.state.accessToken;
+             console.log(this.$store.state.userId);
+                let url="http://localhost:3000/api/transactions?filter[include]=Book&filter[where][user_Id]="+this.$store.state.userId;
+                 console.log(url);
+                   this.$http.get(url,{headers:headers}).then(result => {
+                     this.$store.state.mybooks = result.body;
+                     this.$store.state.total_books=this.$store.state.mybooks.length;
+                     cb(null, 'success');
+                   }, error => {
+                        cb(error);
+                       console.log(error);
+                   });
+             },
+    fetchProfileData(cb){
+       let headers=new Headers( { "content-type": "application/json" });
+               headers['Authorization']=localStorage.accessToken;
+      
+            this.$http.get("http://localhost:3000/api/Students/"+localStorage.userId,{headers: headers} ).then(result => {
+                 localStorage.setItem('userName',result.body.userName);
+                //  console.log(localStorage.userName);
+                this.$store.state.userName = localStorage.getItem('userName');
+                 console.log(this.$store.state.userName);
+                this.$store.state.rollnumber = result.body.rollnumber;
+                this.$store.state.email = result.body.email;
+                cb(null, 'successs');
+                //  this.$router.push("/student/shome");
+            }, error => {
+              cb(error);
+                console.error(error);
+            });
+    },
+  }   
 };
 </script>

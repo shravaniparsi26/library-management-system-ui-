@@ -30,9 +30,8 @@
     >
       <template v-slot:items="props">
         <td>{{ props.item.Book.title }}</td>
-        <td class="text-xs-right">{{ props.item.issued_Date }}</td>
-        <td class="text-xs-right">{{ props.item.fine}}</td>
-         <td class="text-xs-right"><v-btn small color="blue lighten-2" @click="id=props.item.book_Id,dialog=true">return</v-btn></td>
+        <td class="text-xs-left">{{ props.item.issued_Date }}</td>
+        <td class="text-xs-left">{{ props.item.fine}}</td>
       </template>
       <v-alert v-slot:no-results :value="true" color="error" icon="warning">
         Your search for "{{ search }}" found no results.
@@ -45,43 +44,6 @@
     </v-data-table>
   </v-card>
 </template>
-<v-dialog v-model="dialog" width="500" lazy>
-      <v-card>
-     <v-card-text>
-         do u want to submit return request?
-    </v-card-text>
-     <v-divider></v-divider>
-     <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="request()"> yes</v-btn>
-          <v-btn color="primary" flat @click="dialog=false">cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-     <v-dialog v-model="suc" width="500" lazy>
-      <v-card>
-     <v-card-text>
-         book return request sent successfully
-    </v-card-text>
-     <v-divider></v-divider>
-     <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="suc=false">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="fail" width="500" lazy>
-      <v-card>
-     <v-card-text>
-        {{message}}
-    </v-card-text>
-     <v-divider></v-divider>
-     <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="fail=false">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
       </v-container>
     </v-content>
   </v-app>
@@ -118,14 +80,14 @@ export default {
   },
    mounted() {
            let headers=new Headers( { "content-type": "application/json" });
-      headers['Authorization']=this.$store.state.accessToken;
-          let url="http://localhost:3000/api/transactions?filter[include]=Book&filter[where][user_Id]="+this.$store.state.userId;
+      headers['Authorization']=localStorage.accessToken;
+          let url="http://localhost:3000/api/transactions?filter[include]=Book&filter[where][user_Id]="+localStorage.userId+"&getfine=true";
             this.$http.get(url,{headers:headers}).then(result => {
                 this.mybooks = result.body;
                 console.log(this.mybooks);
                this.mybooks.forEach((item,index,array)=>{
                  console.log(item);
-                 if(item.fine!=0){
+                 if(item.fine!=0 && item.isReturned==false){
                    this.fines.push(item);
                  }
                })
@@ -157,7 +119,7 @@ export default {
           },
           { text: 'ISSUE DATE', value: 'issued_Date' ,align:'left'},
           { text: 'FINE', value: 'fine',align:'left' },
-          { text: 'ACTION',align:'left',value:'' },
+          
           
         ],
        

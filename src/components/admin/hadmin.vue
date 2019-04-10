@@ -99,6 +99,7 @@ export default {
        items: [
           { title: 'Home', icon: 'dashboard' ,path:'/admin/ahome'},
           { title: 'Reports', icon: 'question_answer' ,path:'/admin/reports'},
+          { title: 'Student details', icon: 'question_answer' ,path:'/admin/studentdetails'},
         ],
         
         drawer: true,
@@ -113,3 +114,4 @@ export default {
 
 
 </script>
+

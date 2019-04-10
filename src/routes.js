@@ -11,6 +11,7 @@ import fine from './components/student/fine.vue';
 import profile from './components/student/profile.vue';
 import admin from './components/admin/admin.vue';
 import student from './components/student/student.vue';
+import studentdetails from './components/admin/studentdetails.vue';
 //import {store} from './store';
 
 
@@ -19,7 +20,7 @@ export const routes=[
     {path:'/login',component:login, },
     {path:'/register',component:register,},
     {path:'/admin',component:admin,
-     beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}},
+    beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}},
     children: [
         {
           path: 'reports',
@@ -27,6 +28,7 @@ export const routes=[
           beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}},
           
         },
+    {path:'studentdetails',component:studentdetails, beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}} },
     {path:'create',component:create,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},
     {path:'list',component:list,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}} },
     {path:'ahome',component:ahome,beforeEnter:(to,from,next)=>{if(localStorage.auth){next();}else{next('/');}}},

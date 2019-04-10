@@ -35,7 +35,10 @@ export default {
     register(){
       this.$router.push('/register')
     },
-  }
+  },
+  /*created(){
+    localStorage.auth=false;
+  }*/
 }
 </script>
 

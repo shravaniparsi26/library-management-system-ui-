@@ -71,7 +71,9 @@ export default {
       mounted() {
         let amount=0;
          let headers=new Headers( { "content-type": "application/json" });
-      headers['Authorization']=this.$store.state.accessToken;
+         if(localStorage.accessToken==null||localStorage.accessToken==''){this.$router.push('/');}
+      headers['Authorization']=localStorage.accessToken;
+
             this.$http.get("http://localhost:3000/api/transactions?filter[where][isReturned]=false",{headers:headers})
             .then(result => {
                 this.books=result.body;

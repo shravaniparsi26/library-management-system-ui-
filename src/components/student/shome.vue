@@ -30,13 +30,14 @@
        class="elevation-1"
       
     >
+    <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
       <template v-slot:items="props">
         <td>{{ props.item.title }}</td>
        
-        <td class="text-xs-right">{{ props.item.author }}</td>
-        <td class="text-xs-right">{{ props.item.category }}</td>
-        <td class="text-xs-right">{{ props.item.description}}</td>
-        <td class="text-xs-right"><v-btn small color="green"  @click="id=props.item.id,dialog=true">request</v-btn></td>
+        <td class="text-xs-left">{{ props.item.author }}</td>
+        <td class="text-xs-left">{{ props.item.category }}</td>
+        <td class="text-xs-left">{{ props.item.description}}</td>
+        <td class="text-xs-left"><v-btn small color="green"  @click="id=props.item.id,dialog=true">request</v-btn></td>
 
       </template>
       <v-alert v-slot:no-results :value="true" color="error" icon="warning">
@@ -102,7 +103,7 @@ export default {
         id:'',
         dialog:false,
         suc:false,
-        books:this.$store.state.books,
+        books:[],
         fail:false,
         message:'',
         headers: [
@@ -134,7 +135,7 @@ export default {
     
       this.$http.post("http://localhost:3000/api/transactions",t,{headers:headers}).then(result => {
                 this.suc=true;
-                this.$store.commit('fetchData');
+               
 
             }, error => {
               this.message=error.body.error.message;
@@ -144,12 +145,14 @@ export default {
     
    }
  },
- /*mounted() {
+ mounted() {
             this.$http.get("http://localhost:3000/api/books").then(result => {
                 this.books = result.body;
             }, error => {
                 console.error(error);
             });
- },*/
+            this.$store.state.userName=localStorage.userName;
+            console.log(this.$store.state.userName);
+ },
 }
 </script>

@@ -198,6 +198,7 @@ export default {
      this.dialog=false;
      this.$router.push("/login");
     }
-  }
+  },
+ 
 };
 </script>

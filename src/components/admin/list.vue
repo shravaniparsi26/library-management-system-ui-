@@ -35,7 +35,8 @@ export default {
   },
    mounted() {
              let headers=new Headers( { "content-type": "application/json" });
-      headers['Authorization']=this.$store.state.accessToken;
+     if(localStorage.accessToken==null||localStorage.accessToken==''){this.$router.push('/');}
+      headers['Authorization']=localStorage.accessToken;
             this.$http.get("http://localhost:3000/api/books",{headers:headers}).then(result => {
                 this.books = result.body;
             }, error => {
